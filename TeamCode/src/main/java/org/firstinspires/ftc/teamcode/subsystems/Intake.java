@@ -65,6 +65,16 @@ public class Intake {
     public void midUp() {
         midTrans.setPower(1);
     }
+    public void transferToShooter() {
+        midUp();
+        leftUp();
+        rightUp();
+    }
+    public void stopServo() {
+        midStop();
+        leftStop();
+        rightStop();
+    }
 
     public void midDown() {
         midTrans.setPower(-1);
