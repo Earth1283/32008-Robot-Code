@@ -35,7 +35,7 @@ public class ServoPositionTest extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-           drivetrain.drive(gamepad1, 1);
+           drivetrain.drive(gamepad1, 1, true);
 
 //            leftFront.setPower(gamepad1.x ? 1 : 0);
 //            leftBack.setPower(gamepad1.a ? 1 : 0);

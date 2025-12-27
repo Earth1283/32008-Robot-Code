@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
+import java.util.concurrent.TimeUnit;
+
 @TeleOp
 public class velocityTest extends LinearOpMode {
     Robot robot = new Robot();
@@ -17,23 +19,29 @@ public class velocityTest extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            robot.drivetrain.drive(gamepad1, 1);
+            robot.drivetrain.drive(gamepad1, 1, true);
 
             if (gamepad1.right_trigger > 0) {
                 robot.intake.intakeIn();
-                robot.intake.midUp();
-                robot.intake.leftUp();
-                robot.intake.rightDown();
-            } else if (gamepad1.left_trigger > 0) {
+                robot.intake.leftTransIn();
+                robot.intake.rightTransIn();
+            }
+            else if (gamepad1.left_trigger > 0) {
                 robot.intake.intakeOut();
-            } else if (gamepad1.right_bumper) {
-                robot.intake.intakeIn();
-                robot.intake.leftUp();
-                robot.intake.rightUp();
-                robot.intake.midUp();
-            } else {
+            }
+            else {
                 robot.intake.intakeStop();
-                robot.intake.servoStop();
+                robot.intake.leftTransStop();
+                robot.intake.rightTransStop();
+            }
+
+            if (gamepad1.right_bumper) {
+                robot.intake.transferToShooterUP();
+            }
+            else if (gamepad1.left_bumper) {
+                robot.intake.transferToShooterDown();
+            }else{
+                robot.intake.transferToShooterStop();
             }
 
             if (gamepad1.dpadLeftWasPressed()) velocity -= 50;
@@ -41,17 +49,10 @@ public class velocityTest extends LinearOpMode {
             if (gamepad1.dpad_up) panelPos += 0.005;
             if (gamepad1.dpad_down) panelPos -= 0.005;
 
-            if (gamepad1.leftBumperWasPressed()) {
-                shooterOn = !shooterOn;
-            }
 
-            if (shooterOn) {
-                robot.shooter.setShooterVelocity(velocity);
-            } else {
-                robot.shooter.shooterStop();
-            }
 
             robot.shooter.panelTo(panelPos);
+            robot.shooter.setShooterVelocity(velocity);
 
             telemetry.addData("Panel", panelPos);
             telemetry.addData("velocity target", velocity);

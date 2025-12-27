@@ -1,5 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.constants.panelConstants.LEFT_KD;
+import static org.firstinspires.ftc.teamcode.constants.panelConstants.LEFT_KF;
+import static org.firstinspires.ftc.teamcode.constants.panelConstants.LEFT_KI;
+import static org.firstinspires.ftc.teamcode.constants.panelConstants.LEFT_KP;
+import static org.firstinspires.ftc.teamcode.constants.panelConstants.RIGHT_KD;
+import static org.firstinspires.ftc.teamcode.constants.panelConstants.RIGHT_KF;
+import static org.firstinspires.ftc.teamcode.constants.panelConstants.RIGHT_KI;
+import static org.firstinspires.ftc.teamcode.constants.panelConstants.RIGHT_KP;
 import static org.firstinspires.ftc.teamcode.constants.robotConfigs.LEFT_SHOOTER;
 import static org.firstinspires.ftc.teamcode.constants.robotConfigs.PANEL;
 import static org.firstinspires.ftc.teamcode.constants.robotConfigs.RIGHT_SHOOTER;
@@ -10,7 +18,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 public class Shooter {
+    ScheduledExecutorService exec = Executors.newScheduledThreadPool(50);
     public DcMotorEx leftShooter;
     public DcMotorEx rightShooter;
     public Servo panel;
@@ -28,6 +40,9 @@ public class Shooter {
 
         leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        leftShooter.setVelocityPIDFCoefficients(LEFT_KP, LEFT_KI, LEFT_KD, LEFT_KF);
+        rightShooter.setVelocityPIDFCoefficients(RIGHT_KP, RIGHT_KI, RIGHT_KD, RIGHT_KF);
     }
 
     public void setShooterVelocity(double velocity) {
@@ -42,6 +57,7 @@ public class Shooter {
         leftShooter.setVelocity(800);
         rightShooter.setVelocity(800);
     }
+
     public void shooterStop() {
         leftShooter.setPower(0);
         rightShooter.setPower(0);
@@ -52,13 +68,27 @@ public class Shooter {
         setShooterVelocity(velocity);
     }
 
-    public void setShooterByDis(double distance) {
+    public void setShooterClose() {
+        panelTo(0.8);
+        setShooterVelocity(1400);
+    }
+    public void setShooter80() {
+        panelTo(0.39);
+        setShooterVelocity(2100);
+    }
+    public void setShooterFar() {
+        panelTo(0.78);
+        setShooterVelocity(1760);
+    }
+
+    public void setShooterByDis(double distance,double velocityCorrection) {
         if (distance < 120) {
-            setShooter(f(0, 0.00003, -0.0094, 1.0088, distance), f(0, -0.0368, 13.042, 736.11, distance) + velocityCorrection);
+            setShooter(f(-(1E-06), 0.0003, -0.0149,0.3097 , distance), f(-0.0003,0.0722,4.2811 ,1435.9 , distance) + velocityCorrection);
         } else {
-            setShooter(0.26, 1950);
+            setShooter(0.83, 2550);
         }
     }
+
 
     public static double f(double a, double b, double c, double d, double x) {
         return a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d;

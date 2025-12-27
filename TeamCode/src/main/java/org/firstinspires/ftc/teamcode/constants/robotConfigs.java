@@ -13,7 +13,13 @@ public class robotConfigs {
     public static final String PANEL = "panel";
 
     public static final String INTAKE = "intake";
-    public static final String LEFT_TRANS = "lt";
-    public static final String RIGHT_TRANS = "rt";
-    public static final String MID_TRANS = "mt";
+
+
+    public static final String TRANSMOTOR = "transMotor";
+    public static final String LEFT_TRANS_SERVO1 = "lts1";
+    public static final String RIGHT_TRANS_SERVO1 = "rts1";
+    public static final String LEFT_TRANS_SERVO2 = "lts2";
+    public static final String RIGHT_TRANS_SERVO2 = "rts2";
+
+
 }

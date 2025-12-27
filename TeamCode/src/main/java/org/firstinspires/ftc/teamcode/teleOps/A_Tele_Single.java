@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 import java.util.concurrent.Executors;
@@ -14,7 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp
-public class A_Tele extends LinearOpMode {
+public class A_Tele_Single extends LinearOpMode {
     Robot robot = new Robot();
     double panelPos = .85;
     boolean shooterOn = false;
@@ -51,12 +50,12 @@ public class A_Tele extends LinearOpMode {
 
             }
 
-             if (gamepad2.right_bumper) {
+             if (gamepad1.right_bumper) {
                  intakeStateStop2 = false;
                  robot.intake.intakeIn();
                  robot.intake.transferToShooterUP();
             }
-            else if(gamepad2.right_trigger > 0){
+            else if(gamepad1.right_trigger > 0){
                 robot.intake.intakeOut();
                 intakeOut2State = false;
                 robot.intake.transferToShooterDown();
@@ -66,37 +65,27 @@ public class A_Tele extends LinearOpMode {
                 robot.intake.transferToShooterStop();
              }
 
-            if(gamepad2.x){
+            if(gamepad1.x){
                 robot.shooter.setShooterClose();
             }
 
-            else if (gamepad2.y) {
+            else if (gamepad1.y) {
                 robot.shooter.setShooter80();
             }
-            else if (gamepad2.b){
+            else if (gamepad1.b){
                 robot.shooter.setShooterFar();
             }
 
 
-            if(gamepad2.xWasPressed()){
-                velocityCorrection=1850;
-                panelPos=0.78;
-            }
-
-            if (gamepad2.bWasPressed()) {
-                velocityCorrection=1350;
-                panelPos=0.85;
-            }
-
-            if (gamepad2.dpadUpWasPressed()) velocityCorrection += 50;
-            if (gamepad2.dpadDownWasPressed()) velocityCorrection -= 50;
-            if (gamepad2.dpadLeftWasPressed()) panelPos -= 0.01;
-            if (gamepad2.dpadRightWasPressed()) panelPos += 0.01;
+            if (gamepad1.dpadUpWasPressed()) velocityCorrection += 50;
+            if (gamepad1.dpadDownWasPressed()) velocityCorrection -= 50;
+            if (gamepad1.dpadLeftWasPressed()) panelPos -= 0.01;
+            if (gamepad1.dpadRightWasPressed()) panelPos += 0.01;
             if (panelPos < 0)panelPos = 0;
             if (panelPos > 1)panelPos = 1;
 
 
-            if (gamepad2.leftBumperWasPressed()) {
+            if (gamepad1.leftBumperWasPressed()) {
                 exec.schedule(() ->  shooterOn = !shooterOn, 200, TimeUnit.MILLISECONDS);
                 timer.reset();
             }

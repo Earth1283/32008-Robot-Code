@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@Disabled
+//@Disabled
 @TeleOp
 public class MotorDirectionTest extends LinearOpMode {
     private String[] names = {LEFT_FRONT, LEFT_BACK, RIGHT_FRONT, RIGHT_BACK, INTAKE};

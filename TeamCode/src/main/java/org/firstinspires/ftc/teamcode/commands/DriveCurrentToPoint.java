@@ -14,7 +14,7 @@ public class DriveCurrentToPoint extends CommandBase {
     private int numberOfPoint;
     private boolean holdEnd = true;
     private double breaking = 1.0;
-
+    private double maxPower = 1.0;
     public DriveCurrentToPoint(FollowerSubsystem follower, Pose mid1, Pose mid2, Pose mid3, Pose end) {
         targetPos = new Pose(end.getX(), end.getY(), end.getHeading());
         midPos1 = new Pose(mid1.getX(), mid1.getY());
@@ -22,6 +22,10 @@ public class DriveCurrentToPoint extends CommandBase {
         midPos3 = new Pose(mid3.getX(), mid3.getY());
         this.follower = follower;
         numberOfPoint = 5;
+    }
+     public DriveCurrentToPoint setMaxPower (double power){
+        this.maxPower = power;
+        return this;
     }
 
     public DriveCurrentToPoint(FollowerSubsystem follower, Pose mid1, Pose mid2, Pose end) {
