@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Robot {
-    ScheduledExecutorService exec = Executors.newScheduledThreadPool(50);
+    ScheduledExecutorService exec = Executors.newScheduledThreadPool(2);
     public Drivetrain drivetrain = new Drivetrain();
     public Intake intake = new Intake();
     public Shooter shooter = new Shooter();
@@ -40,9 +40,23 @@ public class Robot {
         shooter.init(hardwareMap);
     }
     public void autoInit(HardwareMap hardwareMap) {
-        exec = Executors.newScheduledThreadPool(5);
+        if (exec.isShutdown()) {
+            exec = Executors.newScheduledThreadPool(2);
+        }
         intake.init(hardwareMap);
         shooter.init(hardwareMap);
+    }
+
+    public void stop() {
+        if (exec != null && !exec.isShutdown()) {
+            exec.shutdownNow();
+        }
+    }
+
+    public void schedule(Runnable command, long delay, TimeUnit unit) {
+        if (!exec.isShutdown()) {
+            exec.schedule(command, delay, unit);
+        }
     }
 
     public void startShooter() {

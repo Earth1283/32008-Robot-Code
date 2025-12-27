@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.tests;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.autoEndH;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.autoEndX;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.autoEndY;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.teleOpTargetX;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.teleOpTargetY;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.autoEndH;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.autoEndX;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.autoEndY;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.teleOpTargetX;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.teleOpTargetY;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;

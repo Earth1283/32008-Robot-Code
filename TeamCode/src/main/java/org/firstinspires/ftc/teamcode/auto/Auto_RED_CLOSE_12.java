@@ -1,24 +1,12 @@
-package org.firstinspires.ftc.teamcode.atuo;
+package org.firstinspires.ftc.teamcode.auto;
 
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.BLUE_FAR_INTAKE_BESIDE_END;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.BLUE_FAR_INTAKE_BESIDE_END2;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.BLUE_FAR_INTAKE_BESIDE_START;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.BLUE_FAR_INTAKE_BESIDE_START2;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.BLUE_FAR_PARK;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.BLUE_FAR_SHOOT_BESIDE;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.BLUE_FAR_SHOOT_PRELOAD;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.BLUE_FAR_START;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.RED_FAR_INTAKE_BESIDE_END;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.RED_FAR_INTAKE_BESIDE_START;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.RED_FAR_PARK;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.RED_FAR_SHOOT_BESIDE;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.RED_FAR_SHOOT_PRELOAD;
-import static org.firstinspires.ftc.teamcode.constants.autoConstants.RED_FAR_START;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.autoEndH;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.autoEndX;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.autoEndY;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.teleOpTargetX;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.teleOpTargetY;
+
+import static org.firstinspires.ftc.teamcode.constants.autoConstants.RED_ClOSE_START;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.autoEndH;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.autoEndX;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.autoEndY;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.teleOpTargetX;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.teleOpTargetY;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -38,20 +26,18 @@ import org.firstinspires.ftc.teamcode.subsystems.FollowerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @Autonomous
-public class Auto_BLUE_FAR_6_BESIDE extends OpMode {
+public class Auto_RED_CLOSE_12 extends OpMode {
     private static FollowerSubsystem follower;
     @IgnoreConfigurable
     static TelemetryManager telemetryM;
 
     Robot robot = new Robot();
 
-
-
     @Override
     public void init() {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         follower = new FollowerSubsystem(hardwareMap, telemetryM);
-        follower.setStartingPose(BLUE_FAR_START.copy());
+        follower.setStartingPose(RED_ClOSE_START.copy());
         robot.autoInit(hardwareMap);
 
         telemetryM.update();
@@ -91,83 +77,99 @@ public class Auto_BLUE_FAR_6_BESIDE extends OpMode {
         follower.follower.activateAllPIDFs();
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new InstantCommand(() -> robot.shooter.setShooterFar()),
-                        new WaitCommand(1000),
-                        new DrivePointToPoint(follower,BLUE_FAR_START, BLUE_FAR_SHOOT_PRELOAD),
+
+
+                        // 发射初始球
+                        new InstantCommand(() -> robot.shooter.setShooterClose()),
+                        // shoot preload
+                        new DrivePointToPoint(follower, new Pose(122,124,Math.toRadians(37)), new Pose(95,100,Math.toRadians(45))).setHoldEnd(false),
+
 
                         //发射
                         new InstantCommand(()->robot.autoShoot3Close()), // Constantly open Intake, without transfer it should be fine
-                        new WaitCommand(2000),
+                        new WaitCommand(1000),
+                        new InstantCommand(()->robot.shooter.shooterStop()),
+                        new InstantCommand(()->robot.intake.transferToShooterStop()),
+                        new InstantCommand(()->robot.intake.servoStop()),
+
+                        // intake first row
+                        new InstantCommand(()->robot.intake.intakeOut()),
+                        new DriveCurrentToPoint(follower, new Pose(92,84,Math.toRadians(0))).setHoldEnd(true),
+                        new InstantCommand(()->robot.shooter.shooterStop()),
+                        new InstantCommand(()->robot.autoIntake()),
+                        new DriveCurrentToPoint(follower, new Pose(130,84,Math.toRadians(0))).setHoldEnd(false).setMaxPower(1),
+                        new InstantCommand(()->robot.intake.intakeStop()),
+                        new InstantCommand(()->robot.intake.servoStop()),
+
+                        new DriveCurrentToPoint(follower, new Pose(104, 78), new Pose(128,70,Math.toRadians(0))).setHoldEnd(false), // smash the gate
+                        // new InstantCommand(()->robot.intake.intakeStop()),
+                        new WaitCommand(1000),
+                        new InstantCommand(()->robot.intake.servoStop()),
+
+
+                        // shoot first row
+                        new InstantCommand(() -> robot.shooter.setShooterClose()),
+                        new DriveCurrentToPoint(follower, new Pose(95,100,Math.toRadians(45))).setHoldEnd(false), // 发
+
+                        //发射
+                        new InstantCommand(()->robot.autoShoot3Close()), // Constantly open Intake, without transfer it should be fine
+                        new WaitCommand(1000),
+                        new InstantCommand(()->robot.shooter.shooterStop()),
+                        new InstantCommand(()->robot.intake.transferToShooterStop()),
+                        new InstantCommand(()->robot.intake.servoStop()),
+
+                        // intake second row
+                        new InstantCommand(()->robot.intake.intakeOut()),
+                        new DriveCurrentToPoint(follower, new Pose(92,60,Math.toRadians(0))).setHoldEnd(true),
+                        new InstantCommand(()->robot.shooter.shooterStop()),
+                        new InstantCommand(()->robot.autoIntake()),
+                        new DriveCurrentToPoint(follower, new Pose(135,60,Math.toRadians(0))).setHoldEnd(false).setMaxPower(1),
+                        new InstantCommand(()->robot.intake.intakeStop()),
+                        new InstantCommand(()->robot.intake.servoStop()),
+
+                        // shoot second row
+                        new InstantCommand(() -> robot.shooter.setShooterClose()),
+                        new DriveCurrentToPoint(follower, new Pose(114, 55), new Pose(95,100,Math.toRadians(45))).setHoldEnd(false),
+
+
+                        //发射
+                        new InstantCommand(()->robot.autoShoot3Close()), // Constantly open Intake, without transfer it should be fine
+                        new WaitCommand(1000),
                         new InstantCommand(()->robot.shooter.shooterStop()),
                         new InstantCommand(()->robot.intake.transferToShooterStop()),
                         new InstantCommand(()->robot.intake.servoStop()),
 
 
-
+                        // 吸第三条
                         new InstantCommand(()->robot.intake.intakeOut()),
-                        new DriveCurrentToPoint(follower, BLUE_FAR_INTAKE_BESIDE_START),
+                        new DriveCurrentToPoint(follower, new Pose(84,36,Math.toRadians(0))).setHoldEnd(true),
+                        new InstantCommand(()->robot.shooter.shooterStop()),
                         new InstantCommand(()->robot.autoIntake()),
-                        new DriveCurrentToPoint(follower, BLUE_FAR_INTAKE_BESIDE_END).setMaxPower(1),
-                        new WaitCommand(800),
-                        new InstantCommand(()->robot.autoIntake()),
+                        new DriveCurrentToPoint(follower, new Pose(135   ,36,Math.toRadians(0))).setHoldEnd(false).setMaxPower(1),
                         new InstantCommand(()->robot.intake.intakeStop()),
+                        new InstantCommand(()->robot.intake.servoStop()),
 
-                        new InstantCommand(()->robot.intake.intakeOut()),
-                        new DriveCurrentToPoint(follower, BLUE_FAR_INTAKE_BESIDE_START),
-                        new InstantCommand(()->robot.autoIntake()),
-                        new DriveCurrentToPoint(follower, BLUE_FAR_INTAKE_BESIDE_END).setMaxPower(1),
-                        new WaitCommand(800),
-                        new InstantCommand(()->robot.autoIntake()),
-                        new InstantCommand(()->robot.intake.intakeStop()),
-
-                        new InstantCommand(()->robot.intake.intakeOut()),
-                        new DriveCurrentToPoint(follower, BLUE_FAR_INTAKE_BESIDE_START),
-                        new InstantCommand(()->robot.autoIntake()),
-                        new DriveCurrentToPoint(follower, new Pose(10,10,Math.toRadians(195))).setMaxPower(1),
-                        new WaitCommand(800),
-                        new InstantCommand(()->robot.autoIntake()),
-                        new InstantCommand(()->robot.intake.intakeStop()),
-
-
-                        new DriveCurrentToPoint(follower, BLUE_FAR_SHOOT_BESIDE),
-                        new InstantCommand(() -> robot.shooter.setShooterFar()),
-                        new WaitCommand(1000),
+                        // 发射第三条
+                        new InstantCommand(() -> robot.shooter.setShooterClose()),
+                        new DriveCurrentToPoint(follower, new Pose(95,100,Math.toRadians(45))).setHoldEnd(false),
 
                         //发射
                         new InstantCommand(()->robot.autoShoot3Close()), // Constantly open Intake, without transfer it should be fine
-                        new WaitCommand(2000),
-                        new InstantCommand(()->robot.shooter.shooterStop()),
-                        new InstantCommand(()->robot.intake.transferToShooterStop()),
-                        new InstantCommand(()->robot.intake.servoStop()),
-
-
-                        //第二次吸取
-                        new InstantCommand(()->robot.intake.intakeOut()),
-                        new DriveCurrentToPoint(follower, BLUE_FAR_INTAKE_BESIDE_START2),
-                        new InstantCommand(()->robot.autoIntake()),
-                        new DriveCurrentToPoint(follower, BLUE_FAR_INTAKE_BESIDE_END2).setMaxPower(1),
-                        new WaitCommand(1200),
-                        new InstantCommand(()->robot.intake.intakeStop()),
-
-
-                        new DriveCurrentToPoint(follower, BLUE_FAR_SHOOT_BESIDE),
-                        new InstantCommand(() -> robot.shooter.setShooterFar()),
                         new WaitCommand(1000),
-
-                        //发射
-                        new InstantCommand(()->robot.autoShoot3Close()), // Constantly open Intake, without transfer it should be fine
-                        new WaitCommand(2000),
                         new InstantCommand(()->robot.shooter.shooterStop()),
                         new InstantCommand(()->robot.intake.transferToShooterStop()),
                         new InstantCommand(()->robot.intake.servoStop()),
-
 
                         // park
-                        new DriveCurrentToPoint(follower, BLUE_FAR_PARK),
+                        new DriveCurrentToPoint(follower, new Pose(116, 73, Math.toRadians(0))),
                         new WaitCommand(100),
                         new InstantCommand(this::stop)
 
+
                 )
+
+
+
         );
     }
 
@@ -181,6 +183,6 @@ public class Auto_BLUE_FAR_6_BESIDE extends OpMode {
         autoEndH = follower.follower.getPose().getHeading();
 
         teleOpTargetX = 136.5;
-        teleOpTargetY = 138;
+        teleOpTargetY = 144-138;
     }
 }

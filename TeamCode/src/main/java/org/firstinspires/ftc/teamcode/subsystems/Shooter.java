@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class Shooter {
-    ScheduledExecutorService exec = Executors.newScheduledThreadPool(50);
     public DcMotorEx leftShooter;
     public DcMotorEx rightShooter;
     public Servo panel;

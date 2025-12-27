@@ -1,8 +1,8 @@
 //package org.firstinspires.ftc.teamcode.tests;
 //
 //
-//import static org.firstinspires.ftc.teamcode.constants.robotConstants.AUTO_BLUE_AIM_X;
-//import static org.firstinspires.ftc.teamcode.constants.robotConstants.AUTO_BLUE_AIM_Y;
+//import static org.firstinspires.ftc.teamcode.constants.RobotConstants.AUTO_BLUE_AIM_X;
+//import static org.firstinspires.ftc.teamcode.constants.RobotConstants.AUTO_BLUE_AIM_Y;
 //
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

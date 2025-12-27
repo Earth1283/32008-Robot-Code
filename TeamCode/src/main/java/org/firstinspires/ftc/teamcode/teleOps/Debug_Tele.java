@@ -6,16 +6,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.constants.RobotConstants;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp
-public class A_Tele extends LinearOpMode {
+@TeleOp(name="Debug Tele", group="Debug")
+public class Debug_Tele extends LinearOpMode {
     Robot robot = new Robot();
     double panelPos = .85;
     boolean shooterOn = false;
@@ -36,6 +35,7 @@ public class A_Tele extends LinearOpMode {
         while (opModeIsActive()) {
             robot.drivetrain.drive(gamepad1, 0.8, true);
 
+            // Intake Logic
             if (gamepad1.left_trigger > 0) {
                 robot.intake.intakeOut();
                 shooterOn = false;
@@ -45,84 +45,93 @@ public class A_Tele extends LinearOpMode {
             else if (gamepad1.right_trigger > 0) {
                 robot.intake.intakeIn();
                 intakeOut1State = false;
-            }else{
+            } else {
                 intakeStateStop1 = true;
                 intakeOut1State = true;
-
             }
 
-             if (gamepad2.right_bumper) {
+            if (gamepad2.right_bumper) {
                  intakeStateStop2 = false;
                  robot.intake.intakeIn();
                  robot.intake.transferToShooterUP();
             }
-            else if(gamepad2.right_trigger > 0){
+            else if (gamepad2.right_trigger > 0) {
                 robot.intake.intakeOut();
                 intakeOut2State = false;
                 robot.intake.transferToShooterDown();
-            }else{
+            } else {
                 intakeStateStop2 = true;
-                intakeOut2State =true;
+                intakeOut2State = true;
                 robot.intake.transferToShooterStop();
-             }
-
-            if(gamepad2.x){
-                robot.shooter.setShooterClose();
             }
 
+            if (intakeStateStop1 && intakeStateStop2 && intakeOut1State && intakeOut2State) {
+                robot.intake.intakeStop();
+            }
+
+            // Shooter Settings
+            if (gamepad2.x) {
+                robot.shooter.setShooterClose();
+            }
             else if (gamepad2.y) {
                 robot.shooter.setShooter80();
             }
-            else if (gamepad2.b){
+            else if (gamepad2.b) {
                 robot.shooter.setShooterFar();
             }
 
-
-            if(gamepad2.xWasPressed()){
-                velocityCorrection=1850;
-                panelPos=0.78;
+            if (gamepad2.xWasPressed()) {
+                velocityCorrection = 1850;
+                panelPos = 0.78;
             }
 
             if (gamepad2.bWasPressed()) {
-                velocityCorrection=1350;
-                panelPos=0.85;
+                velocityCorrection = 1350;
+                panelPos = 0.85;
             }
 
+            // Manual Adjustments
             if (gamepad2.dpadUpWasPressed()) velocityCorrection += 50;
             if (gamepad2.dpadDownWasPressed()) velocityCorrection -= 50;
             if (gamepad2.dpadLeftWasPressed()) panelPos -= 0.01;
             if (gamepad2.dpadRightWasPressed()) panelPos += 0.01;
-            if (panelPos < 0)panelPos = 0;
-            if (panelPos > 1)panelPos = 1;
-
+            
+            if (panelPos < 0) panelPos = 0;
+            if (panelPos > 1) panelPos = 1;
 
             if (gamepad2.leftBumperWasPressed()) {
-                robot.schedule(() ->  shooterOn = !shooterOn, 200, TimeUnit.MILLISECONDS);
+                robot.schedule(() -> shooterOn = !shooterOn, 200, TimeUnit.MILLISECONDS);
                 timer.reset();
             }
+
             if (shooterOn) {
                 robot.shooter.setShooter(panelPos, velocityCorrection);
-            }
-            else {
+            } else {
                 robot.shooter.shooterStop();
             }
 
-            if(intakeStateStop1 && intakeStateStop2 && intakeOut1State && intakeOut2State)robot.intake.intakeStop();
+            // --- ADVANCED TELEMETRY ---
+            telemetry.addLine("=== SHOOTER DEBUG ===");
+            telemetry.addData("Shooter ON", shooterOn);
+            telemetry.addData("Target Velocity", velocityCorrection);
+            telemetry.addData("Actual Velocity L", robot.shooter.leftShooter.getVelocity());
+            telemetry.addData("Actual Velocity R", robot.shooter.rightShooter.getVelocity());
+            telemetry.addData("Panel Position", "%.3f", panelPos);
 
-            telemetry.addData("Velocity",velocityCorrection);
-            telemetry.addData("panelPos",panelPos);
-            telemetry.addData("y",gamepad1.left_stick_y);
-            telemetry.addData("x",gamepad1.left_stick_x);
-            telemetry.addData("rx",gamepad1.right_stick_x);
+            telemetry.addLine("\n=== POSITION DEBUG ===");
+            Pose2D pose = robot.drivetrain.getPosition();
+            telemetry.addData("X (in)", "%.2f", pose.getX(DistanceUnit.INCH));
+            telemetry.addData("Y (in)", "%.2f", pose.getY(DistanceUnit.INCH));
+            telemetry.addData("Heading", "%.2f°", pose.getHeading(AngleUnit.DEGREES));
 
+            telemetry.addLine("\n=== DRIVE DEBUG ===");
+            telemetry.addData("Stick Y", gamepad1.left_stick_y);
+            telemetry.addData("Stick X", gamepad1.left_stick_x);
+            telemetry.addData("Stick RX", gamepad1.right_stick_x);
 
             joinedTele.update();
-
-
         }
         robot.shooter.shooterStop();
         robot.stop();
     }
-
-
 }

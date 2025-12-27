@@ -6,12 +6,12 @@ import static org.firstinspires.ftc.teamcode.constants.robotConfigs.PIN_POINT;
 import static org.firstinspires.ftc.teamcode.constants.robotConfigs.RIGHT_BACK;
 import static org.firstinspires.ftc.teamcode.constants.robotConfigs.RIGHT_FRONT;
 
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.AUTO_BLUE_AIM_X;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.AUTO_BLUE_AIM_Y;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.AUTO_RED_AIM_X;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.AUTO_RED_AIM_Y;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.teleOpTargetX;
-import static org.firstinspires.ftc.teamcode.constants.robotConstants.teleOpTargetY;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.AUTO_BLUE_AIM_X;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.AUTO_BLUE_AIM_Y;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.AUTO_RED_AIM_X;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.AUTO_RED_AIM_Y;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.teleOpTargetX;
+import static org.firstinspires.ftc.teamcode.constants.RobotConstants.teleOpTargetY;
 
 import com.bylazar.gamepad.GamepadManager;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
